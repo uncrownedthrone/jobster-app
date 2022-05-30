@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
+
 import { getAllJobsThunk, showStatsThunk } from './allJobsThunk'
 
 const initialFiltersState = {
@@ -72,6 +73,12 @@ const allJobsSlice = createSlice({
     [showStats.rejected]: (state, { payload }) => {
       state.isLoading = false
       toast.error(payload)
+    },
+    [getAllJobs.fulfilled]: (state, { payload }) => {
+      state.isLoading = false
+      state.jobs = payload.jobs
+      state.numOfPages = payload.numOfPages
+      state.totalJobs = payload.totalJobs
     },
   },
 })
