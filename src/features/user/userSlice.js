@@ -1,12 +1,16 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
-
 import {
   addUserToLocalStorage,
   getUserFromLocalStorage,
-  removeUserToLocalStorage,
+  removeUserFromLocalStorage,
 } from '../../utils/localStorage'
-import { loginUserThunk, registerUserThunk, updateUserThunk } from './userThunk'
+import {
+  loginUserThunk,
+  registerUserThunk,
+  updateUserThunk,
+  clearStoreThunk,
+} from './userThunk'
 
 const initialState = {
   isLoading: false,
@@ -34,7 +38,7 @@ export const updateUser = createAsyncThunk(
     return updateUserThunk('/auth/updateUser', user, thunkAPI)
   }
 )
-
+export const clearStore = createAsyncThunk('user/clearStore', clearStoreThunk)
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -45,7 +49,7 @@ const userSlice = createSlice({
     logoutUser: (state, { payload }) => {
       state.user = null
       state.isSidebarOpen = false
-      removeUserToLocalStorage()
+      removeUserFromLocalStorage()
       if (payload) {
         toast.success(payload)
       }
@@ -60,7 +64,7 @@ const userSlice = createSlice({
       state.isLoading = false
       state.user = user
       addUserToLocalStorage(user)
-      toast.success(`Hello there, ${user.name}`)
+      toast.success(`Hello There ${user.name}`)
     },
     [registerUser.rejected]: (state, { payload }) => {
       state.isLoading = false
@@ -74,7 +78,8 @@ const userSlice = createSlice({
       state.isLoading = false
       state.user = user
       addUserToLocalStorage(user)
-      toast.success(`Welcome back, ${user.name}`)
+
+      toast.success(`Welcome Back ${user.name}`)
     },
     [loginUser.rejected]: (state, { payload }) => {
       state.isLoading = false
@@ -87,13 +92,16 @@ const userSlice = createSlice({
       const { user } = payload
       state.isLoading = false
       state.user = user
-
       addUserToLocalStorage(user)
-      toast.success('User Updated')
+
+      toast.success(`User Updated!`)
     },
     [updateUser.rejected]: (state, { payload }) => {
       state.isLoading = false
       toast.error(payload)
+    },
+    [clearStore.rejected]: () => {
+      toast.error('There was an error..')
     },
   },
 })

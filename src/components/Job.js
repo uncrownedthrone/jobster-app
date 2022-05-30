@@ -5,6 +5,7 @@ import moment from 'moment'
 
 import JobInfo from './JobInfo'
 import Wrapper from '../assets/wrappers/Job'
+import { deleteJob, setEditJob } from '../features/job/jobSlice'
 
 const Job = ({
   _id,
@@ -32,6 +33,7 @@ const Job = ({
           <JobInfo icon={<FaLocationArrow />} text={jobLocation} />
           <JobInfo icon={<FaCalendarAlt />} text={date} />
           <JobInfo icon={<FaBriefcase />} text={jobType} />
+          <div className={`status ${status}`}>{status}</div>
         </div>
         <footer>
           <div className='actions'>
@@ -39,17 +41,24 @@ const Job = ({
               to='/add-job'
               className='btn edit-btn'
               onClick={() => {
-                console.log('edit job')
+                dispatch(
+                  setEditJob({
+                    editJobId: _id,
+                    position,
+                    company,
+                    jobLocation,
+                    jobType,
+                    status,
+                  })
+                )
               }}>
               Edit
             </Link>
             <button
               type='button'
               className='btn delete-btn'
-              onClick={() => {
-                console.log('delete job')
-              }}>
-              Delete
+              onClick={() => dispatch(deleteJob(_id))}>
+              delete
             </button>
           </div>
         </footer>
